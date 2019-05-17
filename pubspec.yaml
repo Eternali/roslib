@@ -1,0 +1,19 @@
+name: roslib
+description: ROS interface library for Dart.
+version: 0.0.1
+author: Conrad Heidebrecht
+homepage: https://github.com/eternali/roslib
+
+environment:
+  sdk: ">=2.2.2 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  web_socket_channel: ^1.0.12
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
