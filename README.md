@@ -4,11 +4,9 @@ A new Flutter package project.
 
 ## Getting Started
 
-This project is a starting point for a Dart
-[package](https://flutter.dev/developing-packages/),
-a library module containing code that can be shared easily across
-multiple Flutter or Dart projects.
+## Testing
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+In order to successfully run the tests a ros node must be accessible with packages `ros-{distro}-rosbridge-server` and `ros-{distro}-rospy-tutorials` installed. And it must be running these three processes:
+1. `roscore`
+2. `rlaunch rosbridge_server rosbridge_websocket.launch`
+3. `rosrun rospy_tutorials add_two_ints_server`

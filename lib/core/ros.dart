@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:web_socket_channel/io.dart';
+import 'request.dart';
 
 enum Status { NONE, CONNECTING, CONNECTED, CLOSED, ERRORED }
 enum TopicStatus { SUBSCRIBED, UNSUBSCRIBED, PUBLISHER, ADVERTISED, UNADVERTISED }
@@ -61,15 +62,18 @@ class Ros {
   }
 
   Future<void> close([ int code, String reason ]) async {
-    _statusController.add(Status.CLOSED);
-    status = Status.CLOSED;
     await _channelListener.cancel();
     await _channel.sink.close(code, reason);
+    _statusController.add(Status.CLOSED);
+    status = Status.CLOSED;
   }
 
   bool send(dynamic message) {
     if (status != Status.CONNECTED) return false;
-    final toSend = (message is Map || message is List) ? json.encode(message) : message;
+    final toSend = (message is Request)
+      ? json.encode(message.toJson())
+      : (message is Map || message is List) ? json.encode(message) : message;
+    print('OUTGOING: $toSend');
     _channel.sink.add(toSend);
     return true;
   }
@@ -106,19 +110,23 @@ class Ros {
   }
 
   String requestSubscriber(String name) {
-    return 'subscribe:' + name + ':' + (++subscribers).toString();
+    subscribers++;
+    return 'subscribe:' + name + ':' + ids.toString();
   }
 
   String requestAdvertiser(String name) {
-    return 'advertise:' + name + ':' + (++advertisers).toString();
+    advertisers++;
+    return 'advertise:' + name + ':' + ids.toString();
   }
 
   String requestPublisher(String name) {
-    return 'publish:' + name + ':' + (++publishers).toString();
+    publishers++;
+    return 'publish:' + name + ':' + ids.toString();
   }
 
   String requestServiceCaller(String name) {
-    return 'call_service:' + name + ':' + (++serviceCallers).toString();
+    serviceCallers++;
+    return 'call_service:' + name + ':' + ids.toString();
   }
 
   @override

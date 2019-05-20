@@ -25,9 +25,17 @@ class Service {
   Future call(dynamic req) {
     if (isAdvertised) return Future.value(false);
     final callId = ros.requestServiceCaller(name);
-    Stream receiver = ros.stream.where((message) => message['id'] == callId).map((message) =>
+    final receiver = ros.stream.where((message) {
+      print(message.toString());
+      return message['id'] == callId; }).map((message) =>
       message['result'] == null ? Future.error(message['values']) : Future.value(message['values'])
     );
+    final completer = Completer();
+    StreamSubscription listener;
+    listener = receiver.listen((d) {
+      listener.cancel();
+      completer.complete(d);
+    });
     ros.send(Request(
       op: 'call_service',
       id: callId,
@@ -35,7 +43,7 @@ class Service {
       type: type,
       args: req,
     ));
-    return receiver.first;
+    return completer.future;
   }
 
   Future<void> advertise(ServiceHandler handler) async {

@@ -119,10 +119,10 @@ class Topic {
   }
 
   Future<void> safeSend(Request message) async {
-    ros.send(message.toJson());
+    ros.send(message);
     if (reconnectOnClose && ros.status != Status.CONNECTED) {
       await ros.statusStream.firstWhere((s) => s == Status.CONNECTED);
-      ros.send(message.toJson());
+      ros.send(message);
     }
   }
 
