@@ -1,8 +1,6 @@
 # roslib
 
-A new Flutter package project.
-
-## Getting Started
+A library for communicating to a ROS node over websockets, heavily influenced by roslibjs.
 
 ## Testing
 
