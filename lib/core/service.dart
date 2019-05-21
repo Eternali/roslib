@@ -1,3 +1,5 @@
+// Copyright (c) 2019 Conrad Heidebrecht.
+
 import 'dart:async';
 import 'ros.dart';
 import 'request.dart';

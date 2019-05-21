@@ -1,3 +1,5 @@
+// Copyright (c) 2019 Conrad Heidebrecht.
+
 import 'dart:convert';
 
 /// Container for all possible ROS request parameters.

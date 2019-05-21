@@ -1,3 +1,5 @@
+// Copyright (c) 2019 Conrad Heidebrecht.
+
 import 'dart:async';
 import 'dart:convert';
 import 'package:web_socket_channel/io.dart';
