@@ -2,14 +2,18 @@ import 'dart:async';
 import 'ros.dart';
 import 'service.dart';
 
+/// A wrapper for a ROS parameter.
 class Param {
 
+  /// The ROS connection.
   Ros ros;
   
+  /// Name of the parameter.
   String name;
 
   Param({ this.ros, this.name });
 
+  /// Get the parameter from the ROS node using the /rosapi/get_param service.
   Future get() {
     final client = Service(
       ros: ros,
@@ -19,6 +23,7 @@ class Param {
     return client.call({ 'name': name });
   }
 
+  /// Set the [value] of the parameter.
   Future set(dynamic value) {
     final client = Service(
       ros: ros,
@@ -31,6 +36,7 @@ class Param {
     });
   }
 
+  /// Delete the parameter.
   Future delete() {
     final client = Service(
       ros: ros,

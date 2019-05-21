@@ -1,33 +1,48 @@
 import 'dart:convert';
 
+/// Container for all possible ROS request parameters.
 class Request {
 
+  /// Requested operation.
   String op;
 
+  /// ID to distinguish request or object operating on.
   String id;
 
+  /// Message or service type.
   String type;
 
+  /// Topic name operating on.
   String topic;
 
+  /// Message object (generally JSON).
   dynamic msg;
 
+  /// Latch the topic when publishing.
   bool latch;
 
+  /// The type of compression to use, like 'png' or 'cbor'.
   String compression;
 
+  /// The rate (in ms between messages) at which to throttle the topic.
   int throttleRate;
 
+  /// The queue length at the bridge side used when subscribing.
   int queueLength;
   
+  /// The queue created at the bridge side for republishing topics.
   int queueSize;
 
+  /// Service name operating on.
   String service;
 
+  /// Arguments of the request (JSON).
   Map<String, dynamic> args;
 
+  /// Values returned from a request.
   dynamic values;
 
+  /// Boolean value indicating the success of the operation.
   bool result;
 
   Request({
