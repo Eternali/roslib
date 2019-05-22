@@ -10,6 +10,12 @@ typedef ServiceHandler = Future Function(dynamic request);
 /// Wrapper to interact with ROS services.
 class Service {
 
+  Service({
+    this.ros,
+    this.name,
+    this.type,
+  });
+
   /// The ROS connection.
   Ros ros;
 
@@ -24,12 +30,6 @@ class Service {
 
   /// Checks whether or not the service is currently advertising.
   bool get isAdvertised => _advertiser != null;
-
-  Service({
-    this.ros,
-    this.name,
-    this.type,
-  });
 
   /// Call the service with a request ([req]).
   Future call(dynamic req) {

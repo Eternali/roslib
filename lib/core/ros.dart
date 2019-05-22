@@ -13,6 +13,12 @@ enum TopicStatus { SUBSCRIBED, UNSUBSCRIBED, PUBLISHER, ADVERTISED, UNADVERTISED
 /// Manages status and key information about the connection and node.
 class Ros {
 
+  /// Initializes the [_statusController] as a broadcast.
+  /// The [url] of the ROS node can be optionally specified at this point.
+  Ros({ this.url }) {
+    _statusController = StreamController<Status>.broadcast();
+  }
+
   /// The url of ROS node running the rosbridge server.
   dynamic url;
 
@@ -48,12 +54,6 @@ class Ros {
 
   /// Status variable that can be used when not interested in getting live updates.
   Status status = Status.NONE;
-
-  /// Initializes the [_statusController] as a broadcast.
-  /// The [url] of the ROS node can be optionally specified at this point.
-  Ros({ this.url }) {
-    _statusController = StreamController<Status>.broadcast();
-  }
 
   /// Connect to the ROS node, the [url] can override what was provided in the constructor.
   void connect({ dynamic url }) {

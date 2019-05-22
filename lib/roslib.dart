@@ -2,4 +2,5 @@
 
 library roslib;
 
-export 'core/index.dart';
+export 'core/core.dart';
+export 'actionlib/actionlib.dart';

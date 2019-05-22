@@ -7,13 +7,13 @@ import 'service.dart';
 /// A wrapper for a ROS parameter.
 class Param {
 
+  Param({ this.ros, this.name });
+
   /// The ROS connection.
   Ros ros;
   
   /// Name of the parameter.
   String name;
-
-  Param({ this.ros, this.name });
 
   /// Get the parameter from the ROS node using the /rosapi/get_param service.
   Future get() {

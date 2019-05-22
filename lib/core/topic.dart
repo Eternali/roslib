@@ -7,6 +7,18 @@ import 'request.dart';
 /// Wrapper to interact with ROS topics.
 class Topic {
 
+  Topic({
+    this.ros,
+    this.name,
+    this.type,
+    this.compression = 'none',
+    this.throttleRate = 0,
+    this.latch = false,
+    this.queueSize = 100,
+    this.queueLength = 0,
+    this.reconnectOnClose = true,
+  }) : assert([ 'png', 'cbor', 'none' ].contains(compression)), assert(throttleRate >= 0);
+
   /// The ROS connection.
   Ros ros;
 
@@ -60,18 +72,6 @@ class Topic {
   /// 
   /// Defaults to true.
   bool reconnectOnClose;
-
-  Topic({
-    this.ros,
-    this.name,
-    this.type,
-    this.compression = 'none',
-    this.throttleRate = 0,
-    this.latch = false,
-    this.queueSize = 100,
-    this.queueLength = 0,
-    this.reconnectOnClose = true,
-  }) : assert([ 'png', 'cbor', 'none' ].contains(compression)), assert(throttleRate >= 0);
 
   /// Subscribe to the topic if not already subscribed.
   Future<void> subscribe() async {

@@ -5,6 +5,23 @@ import 'dart:convert';
 /// Container for all possible ROS request parameters.
 class Request {
 
+  Request({
+    this.op,
+    this.id,
+    this.type,
+    this.topic,
+    this.msg,
+    this.latch,
+    this.compression,
+    this.throttleRate,
+    this.queueLength,
+    this.queueSize,
+    this.service,
+    this.args,
+    this.values,
+    this.result,
+  });
+
   /// Requested operation.
   String op;
 
@@ -46,23 +63,6 @@ class Request {
 
   /// Boolean value indicating the success of the operation.
   bool result;
-
-  Request({
-    this.op,
-    this.id,
-    this.type,
-    this.topic,
-    this.msg,
-    this.latch,
-    this.compression,
-    this.throttleRate,
-    this.queueLength,
-    this.queueSize,
-    this.service,
-    this.args,
-    this.values,
-    this.result,
-  });
 
   factory Request.fromJson(dynamic jsonData) {
     return Request(
