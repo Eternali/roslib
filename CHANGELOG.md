@@ -1,3 +1,4 @@
-## [0.0.1] - TODO: Add release date.
+## [0.0.1] - Initial pre-release for visibility
 
-* TODO: Describe initial release.
+* Core ROS communication features work (Topics, Services, Requests, Params)
+
