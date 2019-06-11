@@ -6,7 +6,6 @@ import 'request.dart';
 
 /// Wrapper to interact with ROS topics.
 class Topic {
-
   Topic({
     this.ros,
     this.name,
@@ -17,7 +16,8 @@ class Topic {
     this.queueSize = 100,
     this.queueLength = 0,
     this.reconnectOnClose = true,
-  }) : assert([ 'png', 'cbor', 'none' ].contains(compression)), assert(throttleRate >= 0);
+  })  : assert(['png', 'cbor', 'none'].contains(compression)),
+        assert(throttleRate >= 0);
 
   /// The ROS connection.
   Ros ros;
@@ -44,32 +44,32 @@ class Topic {
   String publishId;
 
   /// The type of compression to use, like 'png' or 'cbor'.
-  /// 
+  ///
   /// Defaults to 'none'.
   String compression;
 
   /// The rate (in ms between messages) at which to throttle the topic.
-  /// 
+  ///
   /// Defaults to 0.
   int throttleRate;
 
   /// Latch the topic when publishing.
-  /// 
+  ///
   /// Defaults to false.
   bool latch;
 
   /// The queue created at the bridge side for republishing topics.
-  /// 
+  ///
   /// Defaults to 100.
   int queueSize;
 
   /// The queue length at the bridge side used when subscribing.
-  /// 
+  ///
   /// Defaults to 0 (no queueing).
   int queueLength;
 
   /// Flag to enable resubscription and readvertisement on a ROS connection close event.
-  /// 
+  ///
   /// Defaults to true.
   bool reconnectOnClose;
 
@@ -170,5 +170,4 @@ class Topic {
       ros.send(message);
     }
   }
-
 }

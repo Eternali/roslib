@@ -4,7 +4,6 @@ import 'dart:async';
 import 'package:roslib/core/core.dart';
 
 class ActionClient {
-
   ActionClient({
     this.ros,
     this.serverName,
@@ -79,7 +78,7 @@ class ActionClient {
         for (var status in message['status_list']) {
           String g = status['goal_id']['id'];
           goals[g] ??= StreamController.broadcast();
-          goals[g].add({ 'status': status });
+          goals[g].add({'status': status});
         }
       }));
     }
@@ -89,8 +88,8 @@ class ActionClient {
       subs.add(feedbacker.subscription.listen((message) {
         String g = message['status']['goal_id']['id'];
         goals[g] ??= StreamController.broadcast();
-        goals[g].add({ 'status': message['status'] });
-        goals[g].add({ 'feedback': message['feedback'] });
+        goals[g].add({'status': message['status']});
+        goals[g].add({'feedback': message['feedback']});
       }));
     }
 
@@ -99,18 +98,13 @@ class ActionClient {
       subs.add(resulter.subscription.listen((message) {
         String g = message['status']['goal_id']['id'];
         goals[g] ??= StreamController.broadcast();
-        goals[g].add({ 'status': message['status'] });
-        goals[g].add({ 'result': message['result'] });
+        goals[g].add({'status': message['status']});
+        goals[g].add({'result': message['result']});
       }));
     }
   }
 
-  void cancel() {
+  void cancel() {}
 
-  }
-
-  void dispose() {
-
-  }
-
+  void dispose() {}
 }

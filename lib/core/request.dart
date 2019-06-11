@@ -4,7 +4,6 @@ import 'dart:convert';
 
 /// Container for all possible ROS request parameters.
 class Request {
-
   Request({
     this.op,
     this.id,
@@ -48,7 +47,7 @@ class Request {
 
   /// The queue length at the bridge side used when subscribing.
   int queueLength;
-  
+
   /// The queue created at the bridge side for republishing topics.
   int queueSize;
 
@@ -109,5 +108,4 @@ class Request {
   String encode() {
     return json.encode(toJson());
   }
-
 }

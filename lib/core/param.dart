@@ -6,12 +6,11 @@ import 'service.dart';
 
 /// A wrapper for a ROS parameter.
 class Param {
-
-  Param({ this.ros, this.name });
+  Param({this.ros, this.name});
 
   /// The ROS connection.
   Ros ros;
-  
+
   /// Name of the parameter.
   String name;
 
@@ -22,7 +21,7 @@ class Param {
       name: '/rosapi/get_param',
       type: 'rosapi/GetParam',
     );
-    return client.call({ 'name': name });
+    return client.call({'name': name});
   }
 
   /// Set the [value] of the parameter.
@@ -45,7 +44,6 @@ class Param {
       name: '/rosapi/delete_param',
       type: 'rosapi/DeleteParam',
     );
-    return client.call({ 'name': name });
+    return client.call({'name': name});
   }
-
 }

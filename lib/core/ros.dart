@@ -7,15 +7,20 @@ import 'request.dart';
 
 /// Status enums.
 enum Status { NONE, CONNECTING, CONNECTED, CLOSED, ERRORED }
-enum TopicStatus { SUBSCRIBED, UNSUBSCRIBED, PUBLISHER, ADVERTISED, UNADVERTISED }
+enum TopicStatus {
+  SUBSCRIBED,
+  UNSUBSCRIBED,
+  PUBLISHER,
+  ADVERTISED,
+  UNADVERTISED
+}
 
 /// The class through which all data to and from a ROS node goes through.
 /// Manages status and key information about the connection and node.
 class Ros {
-
   /// Initializes the [_statusController] as a broadcast.
   /// The [url] of the ROS node can be optionally specified at this point.
-  Ros({ this.url }) {
+  Ros({this.url}) {
     _statusController = StreamController<Status>.broadcast();
   }
 
@@ -24,7 +29,7 @@ class Ros {
 
   /// Total subscribers to ever connect.
   int subscribers = 0;
-  
+
   /// Total number of advertisers to ever connect.
   int advertisers = 0;
 
@@ -56,7 +61,7 @@ class Ros {
   Status status = Status.NONE;
 
   /// Connect to the ROS node, the [url] can override what was provided in the constructor.
-  void connect({ dynamic url }) {
+  void connect({dynamic url}) {
     url ??= this.url;
     // Initialize the connection to the ROS node with a Websocket channel.
     _channel = IOWebSocketChannel.connect(url);
@@ -65,31 +70,28 @@ class Ros {
     _statusController.add(Status.CONNECTED);
     status = Status.CONNECTED;
     // Listen for messages on the connection to update the status.
-    _channelListener = stream.listen(
-      (data) {
-        print('INCOMING: $data');
-        if (status != Status.CONNECTED) {
-          _statusController.add(Status.CONNECTED);
-          status = Status.CONNECTED;
-        }
-      },
-      onError: (error) {
-        _statusController.add(Status.ERRORED);
-        status = Status.ERRORED;
-      },
-      onDone: () {
-        _statusController.add(Status.CLOSED);
-        status = Status.CLOSED;
+    _channelListener = stream.listen((data) {
+      print('INCOMING: $data');
+      if (status != Status.CONNECTED) {
+        _statusController.add(Status.CONNECTED);
+        status = Status.CONNECTED;
       }
-    );
+    }, onError: (error) {
+      _statusController.add(Status.ERRORED);
+      status = Status.ERRORED;
+    }, onDone: () {
+      _statusController.add(Status.CLOSED);
+      status = Status.CLOSED;
+    });
   }
 
   /// Close the connection to the ROS node, an exit [code] and [reason] can
   /// be optionally specified.
-  Future<void> close([ int code, String reason ]) async {
+  Future<void> close([int code, String reason]) async {
     /// Close listener and websocket.
     await _channelListener?.cancel();
     await _channel?.sink?.close(code, reason);
+
     /// Update the connection status.
     _statusController.add(Status.CLOSED);
     status = Status.CLOSED;
@@ -101,8 +103,8 @@ class Ros {
     if (status != Status.CONNECTED) return false;
     // Format the message into JSON and then stringify.
     final toSend = (message is Request)
-      ? json.encode(message.toJson())
-      : (message is Map || message is List) ? json.encode(message) : message;
+        ? json.encode(message.toJson())
+        : (message is Map || message is List) ? json.encode(message) : message;
     print('OUTGOING: $toSend');
     // Actually send it to the node.
     _channel.sink.add(toSend);
@@ -132,7 +134,7 @@ class Ros {
   /// Sends a set_level request to the server.
   /// [level] can be one of {none, error, warning, info}, and
   /// [id] is the optional operation ID to change status level on
-  void setStatusLevel({ String level, int id }) {
+  void setStatusLevel({String level, int id}) {
     send({
       'op': 'set_level',
       'level': level,
@@ -165,14 +167,14 @@ class Ros {
   }
 
   @override
-  int get hashCode => url.hashCode +
-    subscribers.hashCode +
-    advertisers.hashCode +
-    publishers.hashCode +
-    _channel.hashCode +
-    _channelListener.hashCode +
-    stream.hashCode +
-    _statusController.hashCode +
-    status.hashCode;
-
+  int get hashCode =>
+      url.hashCode +
+      subscribers.hashCode +
+      advertisers.hashCode +
+      publishers.hashCode +
+      _channel.hashCode +
+      _channelListener.hashCode +
+      stream.hashCode +
+      _statusController.hashCode +
+      status.hashCode;
 }

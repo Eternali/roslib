@@ -9,7 +9,6 @@ typedef ServiceHandler = Future Function(dynamic request);
 
 /// Wrapper to interact with ROS services.
 class Service {
-
   Service({
     this.ros,
     this.name,
@@ -37,9 +36,10 @@ class Service {
     if (isAdvertised) return Future.value(false);
     // Set up the response receiver by filtering data from the ROS node by the ID generated.
     final callId = ros.requestServiceCaller(name);
-    final receiver = ros.stream.where((message) => message['id'] == callId).map((message) =>
-      message['result'] == null ? Future.error(message['values']) : Future.value(message['values'])
-    );
+    final receiver = ros.stream.where((message) => message['id'] == callId).map(
+        (message) => message['result'] == null
+            ? Future.error(message['values'])
+            : Future.value(message['values']));
     // Wait for the receiver to receive a single response and then return.
     final completer = Completer();
     StreamSubscription listener;
@@ -70,16 +70,16 @@ class Service {
     // Listen for requests, forward them to the handler and then
     // send the response back to the ROS node.
     _advertiser = ros.stream
-      .where((message) => message['service'] == name)
-      .asyncMap((req) => handler(req['args']).then((resp) {
-        ros.send(Request(
-          op: 'service_response',
-          id: req.id,
-          service: name,
-          values: resp ?? {},
-          result: resp != null,
-        ));
-      }));
+        .where((message) => message['service'] == name)
+        .asyncMap((req) => handler(req['args']).then((resp) {
+              ros.send(Request(
+                op: 'service_response',
+                id: req.id,
+                service: name,
+                values: resp ?? {},
+                result: resp != null,
+              ));
+            }));
   }
 
   // Stop advertising the service.
@@ -91,6 +91,4 @@ class Service {
     ));
     _advertiser = null;
   }
-
-
 }

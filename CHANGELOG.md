@@ -2,3 +2,8 @@
 
 * Core ROS communication features work (Topics, Services, Requests, Params)
 
+## [0.0.2] - Formatting issues
+
+* Updated package description.
+* Added an example.
+* Ran `flutter format`.

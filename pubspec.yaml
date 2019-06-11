@@ -1,6 +1,6 @@
 name: roslib
-description: ROS interface library for Dart.
-version: 0.0.1
+description: Interface with a ROS node over websockets with rosbridge, heavily influenced by roslibjs and follows the same structure.
+version: 0.0.2
 author: Conrad Heidebrecht <conrad.heidebrecht@gmail.com>
 homepage: https://github.com/eternali/roslib
 
