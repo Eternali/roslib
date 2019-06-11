@@ -88,8 +88,8 @@ class Ros {
   /// be optionally specified.
   Future<void> close([ int code, String reason ]) async {
     /// Close listener and websocket.
-    await _channelListener.cancel();
-    await _channel.sink.close(code, reason);
+    await _channelListener?.cancel();
+    await _channel?.sink?.close(code, reason);
     /// Update the connection status.
     _statusController.add(Status.CLOSED);
     status = Status.CLOSED;
