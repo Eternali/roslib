@@ -1,7 +1,7 @@
 name: roslib
 description: ROS interface library for Dart.
 version: 0.0.1
-author: Conrad Heidebrecht
+author: Conrad Heidebrecht <conrad.heidebrecht@gmail.com>
 homepage: https://github.com/eternali/roslib
 
 environment:
