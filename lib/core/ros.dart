@@ -166,6 +166,10 @@ class Ros {
     return 'call_service:' + name + ':' + ids.toString();
   }
 
+  bool operator ==(other) {
+    return other.hashCode == hashCode;
+  }
+
   @override
   int get hashCode =>
       url.hashCode +

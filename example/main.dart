@@ -22,7 +22,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Ros ros = Ros(url: 'ws://localhost:9090');
+  Ros ros = Ros(url: 'ws://10.0.2.2:9090');
 
   @override
   Widget build(BuildContext context) {
@@ -33,21 +33,25 @@ class _HomePageState extends State<HomePage> {
       body: StreamBuilder<Object>(
           stream: ros.statusStream,
           builder: (context, snapshot) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                ActionChip(
-                  label: Text(snapshot.data == Status.CONNECTED
-                      ? 'DISCONNECT'
-                      : 'CONNECT'),
-                  onPressed: () {
-                    if (snapshot.data == Status.CONNECTED)
-                      ros.close();
-                    else
-                      ros.connect();
-                  },
-                ),
-              ],
+            return Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  ActionChip(
+                    label: Text(snapshot.data == Status.CONNECTED
+                        ? 'DISCONNECT'
+                        : 'CONNECT'),
+                    backgroundColor: snapshot.data == Status.CONNECTED ? Colors.green[300] : Colors.grey[300],
+                    onPressed: () {
+                      if (snapshot.data == Status.CONNECTED)
+                        ros.close();
+                      else
+                        ros.connect();
+                    },
+                  ),
+                ],
+              ),
             );
           }),
     );

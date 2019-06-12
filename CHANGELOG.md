@@ -7,3 +7,8 @@
 * Updated package description.
 * Added an example.
 * Ran `flutter format`.
+
+## [0.0.3] - Updated Example
+
+* updated example
+* fixed flutter suggestions
