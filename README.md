@@ -17,9 +17,8 @@ A library for communicating to a ROS node over websockets with rosbridge, heavil
   - [ ] Goal
   - [ ] SimpleActionServer
 - [ ] Support TCP connections
-- [ ] TFClient (listen to TFs from tf2_web_republisher
+- [ ] TFClient (listen to TFs from tf2_web_republisher)
 - [ ] URDF (Box, Color, Cylinder, Joint, Material, Mesh, Model, Sphere, Types, Visual)
-- [ ] 
 
 ## Testing
 

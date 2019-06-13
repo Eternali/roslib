@@ -1,6 +1,7 @@
-## [0.0.1] - Initial pre-release for visibility
+## [0.0.3] - Updated Example
 
-* Core ROS communication features work (Topics, Services, Requests, Params)
+* updated example
+* fixed flutter suggestions
 
 ## [0.0.2] - Formatting issues
 
@@ -8,7 +9,6 @@
 * Added an example.
 * Ran `flutter format`.
 
-## [0.0.3] - Updated Example
+## [0.0.1] - Initial pre-release for visibility
 
-* updated example
-* fixed flutter suggestions
+* Core ROS communication features work (Topics, Services, Requests, Params)
