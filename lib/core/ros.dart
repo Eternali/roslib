@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:web_socket_channel/io.dart';
 import 'request.dart';
 
@@ -64,25 +65,31 @@ class Ros {
   void connect({dynamic url}) {
     url ??= this.url;
     // Initialize the connection to the ROS node with a Websocket channel.
-    _channel = IOWebSocketChannel.connect(url);
-    stream = _channel.stream.asBroadcastStream().map((raw) => json.decode(raw));
-    // Update the connection status.
-    _statusController.add(Status.CONNECTED);
-    status = Status.CONNECTED;
-    // Listen for messages on the connection to update the status.
-    _channelListener = stream.listen((data) {
-      print('INCOMING: $data');
-      if (status != Status.CONNECTED) {
-        _statusController.add(Status.CONNECTED);
-        status = Status.CONNECTED;
-      }
-    }, onError: (error) {
-      _statusController.add(Status.ERRORED);
+    try {
+      _channel = IOWebSocketChannel.connect(url);
+      stream =
+          _channel.stream.asBroadcastStream().map((raw) => json.decode(raw));
+      // Update the connection status.
+      status = Status.CONNECTED;
+      _statusController.add(status);
+      // Listen for messages on the connection to update the status.
+      _channelListener = stream.listen((data) {
+        print('INCOMING: $data');
+        if (status != Status.CONNECTED) {
+          status = Status.CONNECTED;
+          _statusController.add(status);
+        }
+      }, onError: (error) {
+        status = Status.ERRORED;
+        _statusController.add(status);
+      }, onDone: () {
+        status = Status.CLOSED;
+        _statusController.add(status);
+      });
+    } on WebSocketException catch (e) {
       status = Status.ERRORED;
-    }, onDone: () {
-      _statusController.add(Status.CLOSED);
-      status = Status.CLOSED;
-    });
+      _statusController.add(status);
+    }
   }
 
   /// Close the connection to the ROS node, an exit [code] and [reason] can
