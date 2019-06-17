@@ -17,6 +17,16 @@ void main() {
     ros.close();
   });
 
+  test('check if a new url is provided upon connection it is used', () async {
+    // closes connection created in [setUp] which is retained only to ensure all
+    // tests pass regardless of order of execution.
+    await ros.close();
+    ros = Ros(url: 'ws://127.0.0.1:9090');
+    expect(ros.url, 'ws://127.0.0.1:9090');
+    ros.connect(url: 'ws://localhost:9090');
+    expect(ros.url, 'ws://localhost:9090');
+  });
+
   test('checks ROS websocket', () {
     expect(ros.statusStream, isNotNull);
     expect(ros.stream, isNotNull);
