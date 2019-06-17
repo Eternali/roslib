@@ -63,6 +63,7 @@ class Ros {
 
   /// Connect to the ROS node, the [url] can override what was provided in the constructor.
   void connect({dynamic url}) {
+    this.url = url ?? this.url;
     url ??= this.url;
     // Initialize the connection to the ROS node with a Websocket channel.
     try {
