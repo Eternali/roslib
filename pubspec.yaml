@@ -10,7 +10,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  web_socket_channel: ^1.0.12
+  web_socket_channel:
+    git:
+      url: git://github.com/artrmz/web_socket_channel.git
+      ref: feature/ready
 
 dev_dependencies:
   flutter_test:

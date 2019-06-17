@@ -152,9 +152,11 @@ packages:
   web_socket_channel:
     dependency: "direct main"
     description:
-      name: web_socket_channel
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.12"
+      path: "."
+      ref: "feature/ready"
+      resolved-ref: "5584f5e5cc031aa2a08f32b0df50aade0d551fb9"
+      url: "git://github.com/artrmz/web_socket_channel.git"
+    source: git
+    version: "1.0.13"
 sdks:
   dart: ">=2.2.2 <3.0.0"

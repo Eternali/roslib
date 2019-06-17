@@ -7,7 +7,7 @@ import 'package:web_socket_channel/io.dart';
 import 'request.dart';
 
 /// Status enums.
-enum Status { NONE, CONNECTING, CONNECTED, CLOSED, ERRORED }
+enum Status { NONE, CONNECTING, CONNECTED, CLOSING, CLOSED, ERRORED }
 enum TopicStatus {
   SUBSCRIBED,
   UNSUBSCRIBED,
@@ -21,12 +21,15 @@ enum TopicStatus {
 class Ros {
   /// Initializes the [_statusController] as a broadcast.
   /// The [url] of the ROS node can be optionally specified at this point.
-  Ros({this.url}) {
+  Ros({this.url, this.timeout}) {
     _statusController = StreamController<Status>.broadcast();
   }
 
   /// The url of ROS node running the rosbridge server.
   dynamic url;
+
+  /// The timeout of the connection
+  Duration timeout;
 
   /// Total subscribers to ever connect.
   int subscribers = 0;
@@ -62,17 +65,25 @@ class Ros {
   Status status = Status.NONE;
 
   /// Connect to the ROS node, the [url] can override what was provided in the constructor.
-  void connect({dynamic url}) {
+  void connect({dynamic url, Duration timeout}) {
     this.url = url ?? this.url;
     url ??= this.url;
+    timeout ??= this.timeout;
     // Initialize the connection to the ROS node with a Websocket channel.
     try {
-      _channel = IOWebSocketChannel.connect(url);
+      _channel = IOWebSocketChannel.connect(url, timeout: timeout);
       stream =
           _channel.stream.asBroadcastStream().map((raw) => json.decode(raw));
       // Update the connection status.
-      status = Status.CONNECTED;
+      status = Status.CONNECTING;
       _statusController.add(status);
+
+      // Listen to the ready status (connection to the websocket established)
+      _channel.ready.then((data) {
+        status = Status.CONNECTED;
+        _statusController.add(status);
+      });
+
       // Listen for messages on the connection to update the status.
       _channelListener = stream.listen((data) {
         print('INCOMING: $data');
@@ -87,7 +98,7 @@ class Ros {
         status = Status.CLOSED;
         _statusController.add(status);
       });
-    } on WebSocketException catch (e) {
+    } on WebSocketException catch (_) {
       status = Status.ERRORED;
       _statusController.add(status);
     }
@@ -96,13 +107,22 @@ class Ros {
   /// Close the connection to the ROS node, an exit [code] and [reason] can
   /// be optionally specified.
   Future<void> close([int code, String reason]) async {
+    status = Status.CLOSING;
+    _statusController.add(status);
+
     /// Close listener and websocket.
     await _channelListener?.cancel();
-    await _channel?.sink?.close(code, reason);
+
+    List<Future> futures = [];
+    if (_channel != null && _channel.sink != null)
+      futures.add(_channel?.sink?.close(code, reason));
+    if (timeout != null) futures.add(Future.delayed(timeout));
+
+    await Future.any(futures);
 
     /// Update the connection status.
-    _statusController.add(Status.CLOSED);
     status = Status.CLOSED;
+    _statusController.add(status);
   }
 
   /// Send a [message] to the ROS node

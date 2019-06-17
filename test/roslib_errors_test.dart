@@ -1,11 +1,9 @@
 // Copyright (c) 2019 Conrad Heidebrecht.
 
-import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:roslib/roslib.dart';
 
 void main() {
-
   Ros ros;
 
   setUp(() {
@@ -21,5 +19,5 @@ void main() {
     expect(ros.statusStream, isNotNull);
     expect(ros.status, Status.ERRORED);
   });
-
+  
 }
