@@ -1,4 +1,4 @@
-name: roslib
+name: roslib_example
 description: Interface with a ROS node over websockets with rosbridge, heavily influenced by roslibjs and follows the same structure.
 version: 0.0.3
 author: Conrad Heidebrecht <conrad.heidebrecht@gmail.com>
@@ -8,13 +8,17 @@ environment:
   sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
-  web_socket_channel: ^1.0.12
+  flutter:
+    sdk: flutter
+  roslib: ^0.0.3
 
 dev_dependencies:
-  test: ^1.2.0
-#   flutter:
-#     sdk: flutter
-#   flutter_test:
-#     sdk: flutter
+  flutter_test:
+    sdk: flutter
 
-# flutter:
+
+dependency_overrides:
+  roslib:
+    path: ../../
+
+flutter:

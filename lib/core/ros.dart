@@ -2,25 +2,18 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-import 'package:web_socket_channel/io.dart';
+// import 'dart:io';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import 'request.dart';
 
 /// Status enums.
 enum Status { NONE, CONNECTING, CONNECTED, CLOSED, ERRORED }
-enum TopicStatus {
-  SUBSCRIBED,
-  UNSUBSCRIBED,
-  PUBLISHER,
-  ADVERTISED,
-  UNADVERTISED
-}
+enum TopicStatus { SUBSCRIBED, UNSUBSCRIBED, PUBLISHER, ADVERTISED, UNADVERTISED }
 
 /// The class through which all data to and from a ROS node goes through.
 /// Manages status and key information about the connection and node.
-class Ros {
+abstract class Ros {
   /// Initializes the [_statusController] as a broadcast.
-  /// The [url] of the ROS node can be optionally specified at this point.
   Ros({this.url}) {
     _statusController = StreamController<Status>.broadcast();
   }
@@ -44,7 +37,7 @@ class Ros {
   int get ids => subscribers + advertisers + publishers + serviceCallers;
 
   /// The websocket connection to communicate with the ROS node.
-  IOWebSocketChannel _channel;
+  WebSocketChannel _channel;
 
   /// Subscription to the websocket stream.
   StreamSubscription _channelListener;
@@ -61,15 +54,18 @@ class Ros {
   /// Status variable that can be used when not interested in getting live updates.
   Status status = Status.NONE;
 
+  WebSocketChannel initializeWebSocketChannel() {
+    throw UnimplementedError("Initializing the web socket failed, make sure you are using Ros_IO for desktop/flutter and Ros_Html for web");
+  }
+
   /// Connect to the ROS node, the [url] can override what was provided in the constructor.
   void connect({dynamic url}) {
     this.url = url ?? this.url;
     url ??= this.url;
-    // Initialize the connection to the ROS node with a Websocket channel.
     try {
-      _channel = IOWebSocketChannel.connect(url);
-      stream =
-          _channel.stream.asBroadcastStream().map((raw) => json.decode(raw));
+      // Initialize the connection to the ROS node with a Websocket channel.
+      _channel = initializeWebSocketChannel();
+      stream = _channel.stream.asBroadcastStream().map((raw) => json.decode(raw));
       // Update the connection status.
       status = Status.CONNECTED;
       _statusController.add(status);
@@ -87,7 +83,7 @@ class Ros {
         status = Status.CLOSED;
         _statusController.add(status);
       });
-    } on WebSocketException catch (e) {
+    } on Exception catch (e) {
       status = Status.ERRORED;
       _statusController.add(status);
     }
@@ -110,9 +106,7 @@ class Ros {
     // If we're not connected give up.
     if (status != Status.CONNECTED) return false;
     // Format the message into JSON and then stringify.
-    final toSend = (message is Request)
-        ? json.encode(message.toJson())
-        : (message is Map || message is List) ? json.encode(message) : message;
+    final toSend = (message is Request) ? json.encode(message.toJson()) : (message is Map || message is List) ? json.encode(message) : message;
     print('OUTGOING: $toSend');
     // Actually send it to the node.
     _channel.sink.add(toSend);
@@ -180,13 +174,5 @@ class Ros {
 
   @override
   int get hashCode =>
-      url.hashCode +
-      subscribers.hashCode +
-      advertisers.hashCode +
-      publishers.hashCode +
-      _channel.hashCode +
-      _channelListener.hashCode +
-      stream.hashCode +
-      _statusController.hashCode +
-      status.hashCode;
+      subscribers.hashCode + advertisers.hashCode + publishers.hashCode + _channel.hashCode + _channelListener.hashCode + stream.hashCode + _statusController.hashCode + status.hashCode;
 }
