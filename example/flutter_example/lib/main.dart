@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:roslib/roslib_io.dart';
+import 'package:roslib/roslib.dart';
 
 void main() {
   runApp(ExampleApp());
@@ -27,8 +27,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    ros = Ros_IO(url: 'ws://10.0.2.2:9090');
-    chatter = Topic(ros: ros, name: '/chatter', type: "std_msgs/String", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    ros = Ros(url: 'ws://10.0.2.2:9090');
+    chatter = Topic(
+        ros: ros, name: '/chatter', type: "std_msgs/String", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     this.initConnection();
     super.initState();
   }

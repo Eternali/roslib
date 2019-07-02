@@ -2,13 +2,13 @@
 
 import 'dart:async';
 import 'package:test/test.dart';
-import 'package:roslib/roslib_io.dart';
+import 'package:roslib/roslib.dart';
 
 void main() {
   Ros ros;
 
   setUp(() {
-    ros = Ros_IO(url: 'ws://localhost:9090');
+    ros = Ros(url: 'ws://localhost:9090');
     ros.connect();
   });
 
@@ -20,7 +20,7 @@ void main() {
     // closes connection created in [setUp] which is retained only to ensure all
     // tests pass regardless of order of execution.
     await ros.close();
-    ros = Ros_IO(url: 'ws://127.0.0.1:9090');
+    ros = Ros(url: 'ws://127.0.0.1:9090');
     expect(ros.url, 'ws://127.0.0.1:9090');
     ros.connect(url: 'ws://localhost:9090');
     expect(ros.url, 'ws://localhost:9090');

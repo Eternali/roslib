@@ -1,5 +1,6 @@
-library roslib_html;
+// Copyright (c) 2019 Conrad Heidebrecht.
+
+library roslib;
 
 export 'core/core.dart';
 export 'actionlib/actionlib.dart';
-export 'core/ros_html.dart';

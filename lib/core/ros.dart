@@ -2,8 +2,16 @@
 
 import 'dart:async';
 import 'dart:convert';
-// import 'dart:io';
 import 'package:web_socket_channel/web_socket_channel.dart';
+
+// ignore: uri_does_not_exist
+// ignore: unused_import
+import 'ros_stub.dart'
+    // ignore: uri_does_not_exist
+    if (dart.library.html) 'ros_html.dart'
+    // ignore: uri_does_not_exist
+    if (dart.library.io) 'ros_io.dart';
+
 import 'request.dart';
 
 /// Status enums.
@@ -12,8 +20,9 @@ enum TopicStatus { SUBSCRIBED, UNSUBSCRIBED, PUBLISHER, ADVERTISED, UNADVERTISED
 
 /// The class through which all data to and from a ROS node goes through.
 /// Manages status and key information about the connection and node.
-abstract class Ros {
+class Ros {
   /// Initializes the [_statusController] as a broadcast.
+  /// The [url] of the ROS node can be optionally specified at this point.
   Ros({this.url}) {
     _statusController = StreamController<Status>.broadcast();
   }
@@ -54,17 +63,13 @@ abstract class Ros {
   /// Status variable that can be used when not interested in getting live updates.
   Status status = Status.NONE;
 
-  WebSocketChannel initializeWebSocketChannel() {
-    throw UnimplementedError("Initializing the web socket failed, make sure you are using Ros_IO for desktop/flutter and Ros_Html for web");
-  }
-
   /// Connect to the ROS node, the [url] can override what was provided in the constructor.
   void connect({dynamic url}) {
     this.url = url ?? this.url;
     url ??= this.url;
     try {
       // Initialize the connection to the ROS node with a Websocket channel.
-      _channel = initializeWebSocketChannel();
+      _channel = initializeWebSocketChannel(url);
       stream = _channel.stream.asBroadcastStream().map((raw) => json.decode(raw));
       // Update the connection status.
       status = Status.CONNECTED;
@@ -83,7 +88,7 @@ abstract class Ros {
         status = Status.CLOSED;
         _statusController.add(status);
       });
-    } on Exception catch (e) {
+    } on WebSocketChannelException catch (e) {
       status = Status.ERRORED;
       _statusController.add(status);
     }
@@ -106,7 +111,9 @@ abstract class Ros {
     // If we're not connected give up.
     if (status != Status.CONNECTED) return false;
     // Format the message into JSON and then stringify.
-    final toSend = (message is Request) ? json.encode(message.toJson()) : (message is Map || message is List) ? json.encode(message) : message;
+    final toSend = (message is Request)
+        ? json.encode(message.toJson())
+        : (message is Map || message is List) ? json.encode(message) : message;
     print('OUTGOING: $toSend');
     // Actually send it to the node.
     _channel.sink.add(toSend);
@@ -174,5 +181,13 @@ abstract class Ros {
 
   @override
   int get hashCode =>
-      subscribers.hashCode + advertisers.hashCode + publishers.hashCode + _channel.hashCode + _channelListener.hashCode + stream.hashCode + _statusController.hashCode + status.hashCode;
+      url.hashCode +
+      subscribers.hashCode +
+      advertisers.hashCode +
+      publishers.hashCode +
+      _channel.hashCode +
+      _channelListener.hashCode +
+      stream.hashCode +
+      _statusController.hashCode +
+      status.hashCode;
 }
