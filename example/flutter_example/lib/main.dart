@@ -30,22 +30,19 @@ class _HomePageState extends State<HomePage> {
     ros = Ros(url: 'ws://10.0.2.2:9090');
     chatter = Topic(
         ros: ros, name: '/chatter', type: "std_msgs/String", reconnectOnClose: true, queueLength: 10, queueSize: 10);
-    this.initConnection();
     super.initState();
   }
 
-  void initConnection() {
-    setState(() {
-      ros.connect();
-      chatter.subscribe();
-    });
+  void initConnection() async {
+    ros.connect();
+    await chatter.subscribe();
+    setState(() {});
   }
 
   void destroyConnection() async {
-    setState(() {
-      chatter.unsubscribe();
-      ros.close();
-    });
+    await chatter.unsubscribe();
+    await ros.close();
+    setState(() {});
   }
 
   @override
@@ -77,7 +74,7 @@ class _HomePageState extends State<HomePage> {
                     backgroundColor: snapshot.data == Status.CONNECTED ? Colors.green[300] : Colors.grey[300],
                     onPressed: () {
                       print(snapshot.data);
-                      if (snapshot.data == Status.CONNECTED) {
+                      if (snapshot.data != Status.CONNECTED) {
                         this.initConnection();
                       } else {
                         this.destroyConnection();
