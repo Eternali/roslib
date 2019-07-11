@@ -1,0 +1,8 @@
+<launch>
+
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+  <node pkg="rospy_tutorials" name="basic_talker" type="talker.py"/>
+  <node pkg="rospy_tutorials" name="basic_subscriber" type="listener.py"/>
+  <node pkg="rospy_tutorials" name="basic_server" type="add_two_ints_server"/>
+
+</launch>

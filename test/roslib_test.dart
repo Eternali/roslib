@@ -1,11 +1,10 @@
 // Copyright (c) 2019 Conrad Heidebrecht.
 
 import 'dart:async';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 import 'package:roslib/roslib.dart';
 
 void main() {
-
   Ros ros;
 
   setUp(() {
@@ -40,8 +39,8 @@ void main() {
       type: 'geometry_msgs/Twist',
     );
     final msg = {
-      'linear': { 'x': 0.1, 'y': 0.2, 'z': 0.3 },
-      'angular': { 'x': -0.1, 'y': -0.2, 'z': -0.3 },
+      'linear': {'x': 0.1, 'y': 0.2, 'z': 0.3},
+      'angular': {'x': -0.1, 'y': -0.2, 'z': -0.3},
     };
     await cmdVel.subscribe();
     expect(cmdVel.subscription, isNotNull);
@@ -67,9 +66,9 @@ void main() {
       name: '/add_two_ints',
       type: 'rospy_tutorials/AddTwoInts',
     );
-    final req = { 'a': 1, 'b': 2 };
+    final req = {'a': 1, 'b': 2};
     final resp = await client.call(req);
-    expect(resp, { 'sum': 3 });
+    expect(resp, {'sum': 3});
   });
 
   test('get and set a param value', () async {
@@ -78,7 +77,6 @@ void main() {
       name: 'max_vel_y',
     );
     param.set('0.8');
-    expect(await param.get(), { 'value': '0.8' });
+    expect(await param.get(), {'value': '0.8'});
   });
-
 }

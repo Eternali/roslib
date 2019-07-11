@@ -2,19 +2,21 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+
+// ignore: uri_does_not_exist
+// ignore: unused_import
+import 'ros_stub.dart'
+    // ignore: uri_does_not_exist
+    if (dart.library.html) 'ros_html.dart'
+    // ignore: uri_does_not_exist
+    if (dart.library.io) 'ros_io.dart';
+
 import 'request.dart';
 
 /// Status enums.
 enum Status { NONE, CONNECTING, CONNECTED, CLOSED, ERRORED }
-enum TopicStatus {
-  SUBSCRIBED,
-  UNSUBSCRIBED,
-  PUBLISHER,
-  ADVERTISED,
-  UNADVERTISED
-}
+enum TopicStatus { SUBSCRIBED, UNSUBSCRIBED, PUBLISHER, ADVERTISED, UNADVERTISED }
 
 /// The class through which all data to and from a ROS node goes through.
 /// Manages status and key information about the connection and node.
@@ -44,7 +46,7 @@ class Ros {
   int get ids => subscribers + advertisers + publishers + serviceCallers;
 
   /// The websocket connection to communicate with the ROS node.
-  IOWebSocketChannel _channel;
+  WebSocketChannel _channel;
 
   /// Subscription to the websocket stream.
   StreamSubscription _channelListener;
@@ -65,11 +67,10 @@ class Ros {
   void connect({dynamic url}) {
     this.url = url ?? this.url;
     url ??= this.url;
-    // Initialize the connection to the ROS node with a Websocket channel.
     try {
-      _channel = IOWebSocketChannel.connect(url);
-      stream =
-          _channel.stream.asBroadcastStream().map((raw) => json.decode(raw));
+      // Initialize the connection to the ROS node with a Websocket channel.
+      _channel = initializeWebSocketChannel(url);
+      stream = _channel.stream.asBroadcastStream().map((raw) => json.decode(raw));
       // Update the connection status.
       status = Status.CONNECTED;
       _statusController.add(status);
@@ -87,7 +88,7 @@ class Ros {
         status = Status.CLOSED;
         _statusController.add(status);
       });
-    } on WebSocketException catch (e) {
+    } on WebSocketChannelException catch (e) {
       status = Status.ERRORED;
       _statusController.add(status);
     }
