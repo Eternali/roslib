@@ -53,6 +53,8 @@ class Topic {
   /// Defaults to 0.
   int throttleRate;
 
+  Duration get throttle => Duration(milliseconds: throttleRate);
+
   /// Latch the topic when publishing.
   ///
   /// Defaults to false.
@@ -74,22 +76,22 @@ class Topic {
   bool reconnectOnClose;
 
   /// Subscribe to the topic if not already subscribed.
-  Future<void> subscribe() async {
-    if (subscribeId == null) {
-      // Create the listenable broadcast subscription stream.
-      subscription = ros.stream.where((message) => message['topic'] == name);
-      subscribeId = ros.requestSubscriber(name);
-      // Send the subscribe request to ROS.
-      await safeSend(Request(
-        op: 'subscribe',
-        id: subscribeId,
-        type: type,
-        topic: name,
-        compression: compression,
-        throttleRate: throttleRate,
-        queueLength: queueLength,
-      ));
-    }
+  Future<bool> subscribe() async {
+    if (ros == null || ros.status != Status.CONNECTED || subscribeId != null) return false;
+    // Create the listenable broadcast subscription stream.
+    subscription = ros.stream.where((message) => message['topic'] == name);
+    subscribeId = ros.requestSubscriber(name);
+    // Send the subscribe request to ROS.
+    await safeSend(Request(
+      op: 'subscribe',
+      id: subscribeId,
+      type: type,
+      topic: name,
+      compression: compression,
+      throttleRate: throttleRate,
+      queueLength: queueLength,
+    ));
+    return true;
   }
 
   /// Unsubscribe from the topic.
@@ -109,6 +111,7 @@ class Topic {
 
   /// Publish a [message] to the topic.
   Future<void> publish(dynamic message) async {
+    if (ros == null) return;
     // Advertise the topic and then send the publish request.
     await advertise();
     publishId = ros.requestPublisher(name);
@@ -123,7 +126,7 @@ class Topic {
 
   /// Advertise the topic.
   Future<void> advertise() async {
-    if (!isAdvertised) {
+    if (ros != null && !isAdvertised) {
       // Send the advertisement request.
       advertiseId = ros.requestAdvertiser(name);
       await safeSend(Request(
@@ -142,7 +145,7 @@ class Topic {
   /// Wait for the connection to close and then reset advertising variables.
   Future<void> watchForClose() async {
     if (!reconnectOnClose) {
-      await ros.statusStream.firstWhere((s) => s == Status.CLOSED);
+      await ros?.statusStream?.firstWhere((s) => s == Status.CLOSED);
       advertiseId = null;
     }
   }
@@ -164,10 +167,27 @@ class Topic {
   Future<void> safeSend(Request message) async {
     // Send the message but if we're not connected and the [reconnectOnClose] flag
     // is set, wait for ROS to reconnect and then resend the [message].
-    ros.send(message);
-    if (reconnectOnClose && ros.status != Status.CONNECTED) {
-      await ros.statusStream.firstWhere((s) => s == Status.CONNECTED);
-      ros.send(message);
+    ros?.send(message);
+    if (reconnectOnClose && ros?.status != Status.CONNECTED) {
+      await ros?.statusStream?.firstWhere((s) => s == Status.CONNECTED);
+      ros?.send(message);
     }
   }
+
+  bool operator ==(o) {
+    return o.hashCode == hashCode;
+  }
+
+  @override
+  int get hashCode => name.hashCode +
+    type.hashCode +
+    subscribeId.hashCode +
+    advertiseId.hashCode +
+    publishId.hashCode +
+    compression.hashCode +
+    throttleRate.hashCode +
+    latch.hashCode +
+    queueSize.hashCode +
+    queueLength.hashCode +
+    reconnectOnClose.hashCode;
 }

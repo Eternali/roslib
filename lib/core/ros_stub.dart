@@ -4,3 +4,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 WebSocketChannel initializeWebSocketChannel(String url) {
   throw UnsupportedError('Cannot create a web socket channel without dart:html or dart:io.');
 }
+
+enum SocketPlatform { NONE, WEB, IO }
+
+var socketPlatform = SocketPlatform.NONE;

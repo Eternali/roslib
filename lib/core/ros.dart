@@ -63,6 +63,8 @@ class Ros {
   /// Status variable that can be used when not interested in getting live updates.
   Status status = Status.NONE;
 
+  static final platform = socketPlatform; 
+
   /// Connect to the ROS node, the [url] can override what was provided in the constructor.
   void connect({dynamic url}) {
     this.url = url ?? this.url;
@@ -76,17 +78,19 @@ class Ros {
       _statusController.add(status);
       // Listen for messages on the connection to update the status.
       _channelListener = stream.listen((data) {
-        print('INCOMING: $data');
         if (status != Status.CONNECTED) {
           status = Status.CONNECTED;
           _statusController.add(status);
         }
       }, onError: (error) {
+        print(error);
         status = Status.ERRORED;
         _statusController.add(status);
       }, onDone: () {
-        status = Status.CLOSED;
-        _statusController.add(status);
+        if (status != Status.ERRORED) {
+          status = Status.CLOSED;
+          _statusController.add(status);
+        }
       });
     } on WebSocketChannelException catch (e) {
       status = Status.ERRORED;
@@ -114,7 +118,6 @@ class Ros {
     final toSend = (message is Request)
         ? json.encode(message.toJson())
         : (message is Map || message is List) ? json.encode(message) : message;
-    print('OUTGOING: $toSend');
     // Actually send it to the node.
     _channel.sink.add(toSend);
     return true;
