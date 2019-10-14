@@ -76,7 +76,7 @@ class Ros {
       _statusController.add(status);
       // Listen for messages on the connection to update the status.
       _channelListener = stream.listen((data) {
-        print('INCOMING: $data');
+        //print('INCOMING: $data');
         if (status != Status.CONNECTED) {
           status = Status.CONNECTED;
           _statusController.add(status);
@@ -114,7 +114,7 @@ class Ros {
     final toSend = (message is Request)
         ? json.encode(message.toJson())
         : (message is Map || message is List) ? json.encode(message) : message;
-    print('OUTGOING: $toSend');
+    //print('OUTGOING: $toSend');
     // Actually send it to the node.
     _channel.sink.add(toSend);
     return true;
