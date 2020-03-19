@@ -76,7 +76,7 @@ class Ros {
       _statusController.add(status);
       // Listen for messages on the connection to update the status.
       _channelListener = stream.listen((data) {
-        //print('INCOMING: $data');
+        print('INCOMING: $data');
         if (status != Status.CONNECTED) {
           status = Status.CONNECTED;
           _statusController.add(status);
