@@ -22,13 +22,14 @@ enum TopicStatus { SUBSCRIBED, UNSUBSCRIBED, PUBLISHER, ADVERTISED, UNADVERTISED
 /// Manages status and key information about the connection and node.
 class Ros {
   /// Initializes the [_statusController] as a broadcast.
-  /// The [url] of the ROS node can be optionally specified at this point.
-  Ros({this.url}) {
+  /// The [url] of the ROS node can be optionally specified at this point
+  /// as well as the verbose attribute
+  Ros({this.url, this.verbose = true}) {
     _statusController = StreamController<Status>.broadcast();
   }
 
   /// Print input/output data if verbose==true
-  bool verbose = false;
+  bool verbose = true;
 
   /// The url of ROS node running the rosbridge server.
   dynamic url;
