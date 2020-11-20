@@ -1,6 +1,6 @@
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/html.dart';
 
-WebSocketChannel initializeWebSocketChannel(String url) {
+WebSocketChannel initializeWebSocketChannel(String url, Map<String, dynamic> headers) {
   return HtmlWebSocketChannel.connect(url);
 }

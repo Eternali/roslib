@@ -23,12 +23,15 @@ enum TopicStatus { SUBSCRIBED, UNSUBSCRIBED, PUBLISHER, ADVERTISED, UNADVERTISED
 class Ros {
   /// Initializes the [_statusController] as a broadcast.
   /// The [url] of the ROS node can be optionally specified at this point.
-  Ros({this.url}) {
+  Ros({this.url, this.headers}) {
     _statusController = StreamController<Status>.broadcast();
   }
 
   /// The url of ROS node running the rosbridge server.
   dynamic url;
+
+  /// The socket connection header.
+  Map<String, dynamic> headers;
 
   /// Total subscribers to ever connect.
   int subscribers = 0;
@@ -64,12 +67,15 @@ class Ros {
   Status status = Status.NONE;
 
   /// Connect to the ROS node, the [url] can override what was provided in the constructor.
-  void connect({dynamic url}) {
+  void connect({dynamic url, Map<String, dynamic> headers}) {
     this.url = url ?? this.url;
     url ??= this.url;
+    this.headers = headers ?? this.headers;
+    headers ??= this.headers;
+
     try {
       // Initialize the connection to the ROS node with a Websocket channel.
-      _channel = initializeWebSocketChannel(url);
+      _channel = initializeWebSocketChannel(url, headers);
       stream = _channel.stream.asBroadcastStream().map((raw) => json.decode(raw));
       // Update the connection status.
       status = Status.CONNECTED;
