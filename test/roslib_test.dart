@@ -71,6 +71,25 @@ void main() {
     expect(resp, {'sum': 3});
   });
 
+  test('host a service', () async {
+    final server = Service(
+      ros: ros,
+      name: '/add_two_ints_dart',
+      type: 'rospy_tutorials/AddTwoInts',
+    );
+    server.advertise((request) async {
+      return {'sum': request['a'] + request['b']};
+    });
+    final client = Service(
+      ros: ros,
+      name: '/add_two_ints_dart',
+      type: 'rospy_tutorials/AddTwoInts',
+    );
+    final req = {'a': 1, 'b': 2};
+    final resp = await client.call(req);
+    expect(resp, {'sum': 3});
+  });
+
   test('get and set a param value', () async {
     final param = Param(
       ros: ros,
